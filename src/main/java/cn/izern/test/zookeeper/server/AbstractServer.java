@@ -5,6 +5,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cn.izern.test.zookeeper.util.ZookeeperUtils;
 
@@ -14,6 +16,8 @@ import cn.izern.test.zookeeper.util.ZookeeperUtils;
  * 2018年3月21日 下午9:44:38
  */
 public abstract class AbstractServer implements Runnable {
+	
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
 	/**
 	 * 获取服务名称
@@ -51,13 +55,13 @@ public abstract class AbstractServer implements Runnable {
 		try {
 			long live = keepSecond();
 			TimeUnit.SECONDS.sleep(live);
-			System.out.println(service.getId() + " alive " + live + " S");
+			logger.info(service.getId() + " alive " + live + " S");
 			discovery.close();
 			client.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println(this.toString() + " death");
+		logger.info(this.toString() + " death");
 	}
 
 }

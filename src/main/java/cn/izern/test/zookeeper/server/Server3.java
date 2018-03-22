@@ -3,13 +3,13 @@ package cn.izern.test.zookeeper.server;
 import java.util.Random;
 
 /**
- * 服务1,  启动后注册在zookeeper中
+ * 服务3,  启动后注册在zookeeper中
  * @author root
  * 2018年3月21日 下午9:49:13
  */
-public class Server1 extends AbstractServer  {
+public class Server3 extends AbstractServer  {
 	
-	private Long live = Long.valueOf((new Random().nextInt(50)+10));
+	private Long live = Long.valueOf((new Random().nextInt(80)+10));
 
 	@Override
 	public String service() {
@@ -23,7 +23,7 @@ public class Server1 extends AbstractServer  {
 
 	@Override
 	public String getName() {
-		return "server1";
+		return "server3";
 	}
 
 }

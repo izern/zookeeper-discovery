@@ -7,6 +7,8 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.UriSpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cn.izern.test.zookeeper.server.AbstractServer;
 
@@ -19,15 +21,23 @@ public class ZookeeperUtils {
 	
 	// ZNode 路径
 	private static String basePaht = "/cn/izern/test/zookeeper";
+	protected static Logger logger = LoggerFactory.getLogger(ZookeeperUtils.class);
+	
 	
 	/**
 	 * 获取默认client
 	 * @return
 	 */
 	public static CuratorFramework getClient() {
-		CuratorFramework client = CuratorFrameworkFactory.newClient("localhost:2181",
-				new ExponentialBackoffRetry(1000, 3));
-		System.out.println("create client success.");
+		CuratorFramework client = CuratorFrameworkFactory.builder()
+					.connectString("localhost:2181,localhost:2182,localhost:2183")
+					.retryPolicy(new ExponentialBackoffRetry(1000, 3))
+					.connectionTimeoutMs(3000)
+					.sessionTimeoutMs(5000)
+					.build();
+//				newClient("localhost:2181",
+//				new ExponentialBackoffRetry(1000, 3));
+		logger.info("create client success.");
 		client.start();
 		return client;
 	}
@@ -47,7 +57,7 @@ public class ZookeeperUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("create ServiceDiscovery success.");
+		logger.info("create ServiceDiscovery success.");
 		return discovery;
 	}
 	
@@ -60,11 +70,11 @@ public class ZookeeperUtils {
 		try {
 			ServiceInstance<String> service = ServiceInstance.<String>builder()
 			        .id(server.toString())
-			        .name(server.getName())
+			        .name("test-server")
 			        .payload(server.payload())
 			        .uriSpec(new UriSpec("{address}:{port}"))
 			        .build();
-			System.out.println("create service "+server.toString() + " for service name " + server.getName());
+			logger.info("create service {} for service name ", server.toString(), "test-server");
 			return service;
 		} catch (Exception e) {
 			e.printStackTrace();

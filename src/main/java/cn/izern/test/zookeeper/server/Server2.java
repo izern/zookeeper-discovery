@@ -9,11 +9,11 @@ import java.util.Random;
  */
 public class Server2 extends AbstractServer  {
 	
-	private Long live = Long.valueOf((new Random().nextInt(80)+1));
+	private Long live = Long.valueOf((new Random().nextInt(80)+10));
 
 	@Override
 	public String service() {
-		return "This is "+toString()+", current time is " + System.currentTimeMillis();
+		return "This is "+getName()+", current time is " + System.currentTimeMillis();
 	}
 
 	@Override

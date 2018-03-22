@@ -1,15 +1,9 @@
 package cn.izern.test.zookeeper;
 
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.x.discovery.ServiceDiscovery;
-import org.apache.curator.x.discovery.ServiceInstance;
-
+import cn.izern.test.zookeeper.client.Client;
 import cn.izern.test.zookeeper.server.Server1;
 import cn.izern.test.zookeeper.server.Server2;
-import cn.izern.test.zookeeper.util.ZookeeperUtils;
+import cn.izern.test.zookeeper.server.Server3;
 
 public class Main {
 
@@ -17,31 +11,22 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		
 		// start server 
-		for (int i = 0; i < 5; i++) {
-			Runnable run = new Server1();
-			Thread thread = new Thread(run);
-			thread.setName("thread-"+ i);
-			thread.start();
-		}
-		for (int i = 0; i < 5; i++) {
-			Runnable run = new Server2();
-			Thread thread = new Thread(run);
-			thread.setName("thread2-"+ i);
-			thread.start();
-		}
-		int i = 0;
-		CuratorFramework client = ZookeeperUtils.getClient();
-		ServiceDiscovery<String> discovery = ZookeeperUtils.getDiscovery(client);
-		while(i < 100) {
-			Collection<ServiceInstance<String>> instances = discovery.queryForInstances("server1");
-			System.out.println("--------- find server1 instance --------");
-			System.out.println("instance count " + instances.size());
-			instances.forEach((instance)->{
-				System.out.println(instance.getId());
-			});
-			System.out.println("---------      end      --------");
-			i ++;
-			TimeUnit.SECONDS.sleep(1L);
-		}
+		Runnable run = new Server1();
+		Thread thread = new Thread(run);
+		thread.start();
+		// server 2
+		Runnable run2 = new Server2();
+		Thread thread2 = new Thread(run2);
+		thread2.start();
+		// server 3
+		Runnable run3 = new Server3();
+		Thread thread3 = new Thread(run3);
+		thread3.start();
+		
+		Runnable client = new Client();
+		Thread clientThread = new Thread(client);
+		clientThread.setDaemon(true);
+		clientThread.start();
+		
 	}
 }
